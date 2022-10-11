@@ -1,11 +1,14 @@
 import threading
-
+import requests
 import rel
 import websocket
 
+tick = None
+
 
 def on_message(ws, message):
-    print(message)
+    tick = message
+    print(tick)
 
 
 def on_error(ws, error):
@@ -24,13 +27,13 @@ def on_open(ws):
         print("Ticker Started :::")
 
     try:
-        T = threading.Thread(target=ticker)
-        T.start()
+        t = threading.Thread(target=ticker)
+        t.start()
     except:
         print("Ticker Thread Failed To Start !")
 
 
-if __name__ == "__main__":
+def start_socket():
     # websocket.enableTrace(True)
     ws = websocket.WebSocketApp("wss://openapi-ws.bitmart.com/api?protocol=1.1",
                                 on_open=on_open,
@@ -42,3 +45,8 @@ if __name__ == "__main__":
 
     rel.signal(2, rel.abort)  # Keyboard Interrupt
     rel.dispatch()
+
+
+def get_asset_price(trading_pair):
+    uri = "https://api-cloud.bitmart.com/spot/v1/ticker_detail?symbol=" + trading_pair
+    print(requests.get(uri).json())
