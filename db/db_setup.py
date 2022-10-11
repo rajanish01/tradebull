@@ -5,6 +5,7 @@ from psycopg2 import Error
 def setup():
     try:
         connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
                                       host="localhost",
                                       port="5432",
                                       database="tradebull")
